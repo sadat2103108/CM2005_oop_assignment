@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+#include "Candlestick.h"
 #include "Monitor.h"
 #include "processCSV.h"
 #include "SparseTable.h"
@@ -16,7 +17,13 @@ vector<SparseTable> stMins;	  // for efficiently finding min value of a range
 vector<SparseTable> stMaxs;	  // for efficiently finding max value of a range
 vector<PrefixSum> prefixSums; // for efficiently finding sum of a range
 
+const int BASE_YEAR = 1980;
+
 int COUNTRY_INDEX;
+int yearS, yearE, monthS, monthE, dayS, dayE;
+string duration;
+
+
 
 void init()
 {
@@ -41,9 +48,56 @@ void init()
 	}
 }
 
+void chooseDuration(){
+	int op; cin>>op;
+	cout<<"choose a candlestick duration: "<<endl;
+	cout<<"1. Yearly"<<endl;
+	cout<<"2. Monthly"<<endl;
+	cout<<"3. Daily"<<endl;
+	cout<<"Choose an option (1/2/3): "; cin>>op;
+
+
+	cout<<"Enter Starting year: "; cin>>yearS; 
+	cout<<"Enter Ending year: "; cin>>yearE;
+
+
+	if(op>1){
+		cout<<"Enter Starting month: "; cin>>monthS; 
+		cout<<"Enter Ending year: "; cin>>monthE;
+	}
+
+	if(op>2){
+		cout<<"Enter Starting day of month: "; cin>>dayS; 
+		cout<<"Enter Ending day of month: "; cin>>dayE;
+	}
+
+	string durations[]= {"year", "month", "day"};
+	
+	duration = durations[op-1];
+	
+}
+
+
+vector<Candlestick> generateCandle(){
+
+	int startidx = timeToIdx(yearS, monthS, dayS);
+	int endidx = timeToIdx(yearE, monthE, dayE);
+	int yearP, monthP, dayP; // previous... 
+	if(duration=="year"){
+		if(yearS==BASE_YEAR) yearS++;
+		yearP = yearE-1;
+		
+
+	}
+
+}
+
+
 
 
 int main(){
+
+
 
 	init();
 
@@ -68,11 +122,19 @@ int main(){
 		cout<<"Choose your country (e.g. "<<(*COUNTRIES.begin()).first<<"): ";
 		cin>>country;
 
+		while( COUNTRIES.find(country) == COUNTRIES.end() ){
+			cout<<"Invalid Input, try again."<<endl;
+			cout<<"Choose your country (e.g. "<<(*COUNTRIES.begin()).first<<"): ";
+			cin>>country;
+		}
+
 		COUNTRY_INDEX = COUNTRIES[country];
 
-		cout<<"index="<<COUNTRY_INDEX<<endl;
+		chooseDuration();
+
+
 		
-		cin.get();
+		// cin.get();
 
 	}
 
