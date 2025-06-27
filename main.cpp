@@ -22,11 +22,8 @@ int predictY, predictM, predictD;
 void init()
 {
 
-	clearScreen();
 
-	cout << "LOADING CSV..." << endl;
 	loadFromCSV(COUNTRIES, TIMESTAMPS, TEMPERATURES);
-	clearScreen();
 
 	// setUpCountryData();
 	countryCode = (*COUNTRIES.begin()).first;
@@ -179,7 +176,12 @@ void plotPredictedData(){
 int main()
 {
 
+	clearScreen();
+	cout << "LOADING DATA FROM CSV..." << endl;
 	init();
+	
+	
+
 
 	while (true)
 	{
@@ -192,7 +194,7 @@ int main()
 		cout << "Enter option (0,1,2): "; 
 		int op; cin >> op;
 
-		while (op < 0 or op > 5)
+		while (op < 0 or op > 2)
 		{
 			cout << "Invalid option, choose again: ";
 			cin >> op;
