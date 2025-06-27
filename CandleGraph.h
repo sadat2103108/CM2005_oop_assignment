@@ -1,13 +1,10 @@
 #pragma once
-#include <vector>
-#include <string>
-#include <sstream>
-#include <iomanip>
-#include <fstream>
+
+#include <bits/stdc++.h>
+
 #include "Candlestick.h"
-#include <cmath>
 #include "utils.h"
-#include <cstdlib>
+
 
 using namespace std;
 

@@ -2,6 +2,7 @@
 #include "CandleGraph.h"
 #include "processCSV.h"
 #include "utils.h"
+#include "generateData.h"
 
 using namespace std;
 
@@ -33,15 +34,15 @@ void init()
 	endDateIdx = TIMESTAMPS.size() - 1;
 }
 
-void changeCountry()
+void selectCountry()
 {
 	clearScreen();
 	for (auto it : COUNTRIES)
 	{
-		cout << it.first << " ";
+		cout << it.first << " : "<<countryNames[it.first]<<endl;
 	}
-	cout << endl;
-	cout << "Choose a country: ";
+	
+	cout << "Enter a country code: ";
 	string x;
 	cin >> x;
 	x = toUpperCase(x);
@@ -58,7 +59,7 @@ void changeCountry()
 	// setUpCountryData();
 }
 
-void changeTimeScale()
+void selectTimeFrame()
 {
 	clearScreen();
 	cout << "1. Year" << endl;
@@ -79,7 +80,7 @@ void changeTimeScale()
 
 
 
-void changeDate() {
+void selectDateRange() {
 
     clearScreen();
     cout << "Enter 0 to exit anytime\n";
@@ -162,9 +163,10 @@ int main()
 		}
 		if (op == 1)
 		{
-			changeCountry();
-			changeTimeScale();
-			changeDate();
+			selectCountry();
+			selectTimeFrame();
+			selectDateRange();
+
 			displayCandleSticks();
 		}
 

@@ -1,22 +1,56 @@
 #pragma once
 
-#include <cstdlib>
-#include<string>
-#include<iostream>
+#include <bits/stdc++.h>
+
 #include "Candlestick.h"
-#include <vector>
-#include <cmath>
-#include <chrono>
-#include <tuple>
-using std::tuple;
-using std::make_tuple;
-using std::get;
 
 using namespace std;
 
+
+
+
+map<string, string> countryNames = {
+    {"AT", "Austria"},
+    {"BE", "Belgium"},
+    {"BG", "Bulgaria"},
+    {"CH", "Switzerland"},
+    {"CZ", "Czech Republic"},
+    {"DE", "Germany"},
+    {"DK", "Denmark"},
+    {"EE", "Estonia"},
+    {"ES", "Spain"},
+    {"FI", "Finland"},
+    {"FR", "France"},
+    {"GB", "United Kingdom"},
+    {"GR", "Greece"},
+    {"HR", "Croatia"},
+    {"HU", "Hungary"},
+    {"IE", "Ireland"},
+    {"IT", "Italy"},
+    {"LT", "Lithuania"},
+    {"LU", "Luxembourg"},
+    {"LV", "Latvia"},
+    {"NL", "Netherlands"},
+    {"NO", "Norway"},
+    {"PL", "Poland"},
+    {"PT", "Portugal"},
+    {"RO", "Romania"},
+    {"SE", "Sweden"},
+    {"SI", "Slovenia"},
+    {"SK", "Slovakia"}
+};
+
+
+
+
+
+
 void clearScreen(){
     system("cls");
-}    
+}
+
+
+
 
 string toUpperCase(const string& input) {
     string result = input;
@@ -28,21 +62,21 @@ string toUpperCase(const string& input) {
 
 
 
-tuple<int, int, int> getDateInput(const std::string& label, int xScaleIdx) {
+tuple<int, int, int> getDateInput(const string& label, int xScaleIdx) {
     int y = 1980, m = 1, d = 1;
 
-    std::cout << "Enter " << label << " Year: ";
-    std::cin >> y;
+    cout << "Enter " << label << " Year: ";
+    cin >> y;
     if (y == 0) return make_tuple(0, 0, 0);
 
     if (xScaleIdx > 0) {
-        std::cout << "Enter " << label << " Month: ";
-        std::cin >> m;
+        cout << "Enter " << label << " Month: ";
+        cin >> m;
         if (m == 0) return make_tuple(0, 0, 0);
 
         if (xScaleIdx > 1) {
-            std::cout << "Enter " << label << " Day: ";
-            std::cin >> d;
+            cout << "Enter " << label << " Day: ";
+            cin >> d;
             if (d == 0) return make_tuple(0, 0, 0);
         }
     }
@@ -54,9 +88,9 @@ tuple<int, int, int> getDateInput(const std::string& label, int xScaleIdx) {
 
 chrono::year_month_day timestampToDate(const string& timestamp){
     
-    int y = std::stoi(timestamp.substr(0, 4));
-    int m = std::stoi(timestamp.substr(5, 2));
-    int d = std::stoi(timestamp.substr(8, 2));
+    int y = stoi(timestamp.substr(0, 4));
+    int m = stoi(timestamp.substr(5, 2));
+    int d = stoi(timestamp.substr(8, 2));
 
     chrono::year_month_day ymd = chrono::year{y} / chrono::month{(unsigned int) m} / chrono::day{(unsigned int) d};
 
@@ -65,7 +99,7 @@ chrono::year_month_day timestampToDate(const string& timestamp){
 }    
 
 int dateToIdx(int y, int m, int d, int xScaleIdx) {
-    using namespace std::chrono;
+    using namespace chrono;
 
     if( xScaleIdx < 2 ) d=1;
     if( xScaleIdx < 1 ) m = 1;
@@ -119,50 +153,3 @@ int getNextDateIdx(const string& timestamp, int xScaleIdx, bool update=true) {
     return dateToIdx(y,m,d, xScaleIdx);
 }
 
-
-
-vector<Candlestick> generateCandlestickData(vector<float>&TEMPERATURES, int xScaleIdx, int startDateIdx, int endDateIdx, vector<string>& TIMESTAMPS){
-    vector<Candlestick> data;
-    
-    
-    float open = 0; 
-    int cnt =0;
-    for(int i=startDateIdx; i<= getNextDateIdx(TIMESTAMPS[startDateIdx], xScaleIdx); i++){
-        cnt++;
-        open+= TEMPERATURES[i];
-    }
-    open/=cnt;
-    cnt=0;
-    
-    float close =0, mn = 200, mx = -200;
-    int nextIdx = getNextDateIdx(TIMESTAMPS[startDateIdx], xScaleIdx);
-
-    for(int i =startDateIdx; i<=endDateIdx; i++){
-        
-        float t = TEMPERATURES[i];
-        mn = min(mn,t);
-        mx = max(mx,t);
-        close += t;
-        cnt++;
-
-
-        if(i == nextIdx ){
-            close/=cnt;
-            // cout<<open<<" "<<mx<<" "<<mn<<" "<<close<<endl;
-            
-            data.emplace_back(Candlestick{open, mx, mn, close});
-
-            open = close;
-            close =0, mn = 200, mx = -200;
-            cnt=0;
-            nextIdx =  getNextDateIdx(TIMESTAMPS[nextIdx], xScaleIdx);
-        }
-    }
-
-
-    return data;
-
-
-
-
-}
