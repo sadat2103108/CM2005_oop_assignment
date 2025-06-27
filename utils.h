@@ -7,6 +7,10 @@
 #include <vector>
 #include <cmath>
 #include <chrono>
+#include <tuple>
+using std::tuple;
+using std::make_tuple;
+using std::get;
 
 using namespace std;
 
@@ -21,6 +25,31 @@ string toUpperCase(const string& input) {
     }
     return result;
 }
+
+
+
+tuple<int, int, int> getDateInput(const std::string& label, int xScaleIdx) {
+    int y = 1980, m = 1, d = 1;
+
+    std::cout << "Enter " << label << " Year: ";
+    std::cin >> y;
+    if (y == 0) return make_tuple(0, 0, 0);
+
+    if (xScaleIdx > 0) {
+        std::cout << "Enter " << label << " Month: ";
+        std::cin >> m;
+        if (m == 0) return make_tuple(0, 0, 0);
+
+        if (xScaleIdx > 1) {
+            std::cout << "Enter " << label << " Day: ";
+            std::cin >> d;
+            if (d == 0) return make_tuple(0, 0, 0);
+        }
+    }
+
+    return make_tuple(y, m, d);
+}
+
 
 
 chrono::year_month_day timestampToDate(const string& timestamp){
@@ -86,7 +115,7 @@ int getNextDateIdx(const string& timestamp, int xScaleIdx, bool update=true) {
     int y = static_cast<int>(ymd.year());
     int m = static_cast<unsigned>(ymd.month()) ;
     int d = static_cast<unsigned>(ymd.day()) ;
-
+ 
     return dateToIdx(y,m,d, xScaleIdx);
 }
 
@@ -95,7 +124,6 @@ int getNextDateIdx(const string& timestamp, int xScaleIdx, bool update=true) {
 vector<Candlestick> generateCandlestickData(vector<float>&TEMPERATURES, int xScaleIdx, int startDateIdx, int endDateIdx, vector<string>& TIMESTAMPS){
     vector<Candlestick> data;
     
-    startDateIdx = getNextDateIdx(TIMESTAMPS[startDateIdx], xScaleIdx, false );
     
     float open = 0; 
     int cnt =0;
@@ -120,7 +148,7 @@ vector<Candlestick> generateCandlestickData(vector<float>&TEMPERATURES, int xSca
 
         if(i == nextIdx ){
             close/=cnt;
-            cout<<open<<" "<<mx<<" "<<mn<<" "<<close<<endl;
+            // cout<<open<<" "<<mx<<" "<<mn<<" "<<close<<endl;
             
             data.emplace_back(Candlestick{open, mx, mn, close});
 

@@ -6,38 +6,35 @@
 #include <fstream>
 #include "Candlestick.h"
 #include <cmath>
+#include "utils.h"
+#include <cstdlib>
+
 using namespace std;
 
-class Graphics
+class CandleGraph
 {
 private:
-    /*
-        the given dataset has a max temperature of 105.537F
-        and min temperature of -35.5234F
-        so the scale is made in range [-40,120]
-        in Y axis , 1 Unit = 5F
-    */
-    const float MAXTEMP = 45;
-    const float MINTEMP = -40;
-    // const int MAXTEMP = 100;
-    // const int MINTEMP = 40;
-    const float UNIT = 1;
-    const int ROW = (MAXTEMP - MINTEMP) / UNIT;
-    vector<Candlestick> &candleData;
+
+    float MAXTEMP;
+    float MINTEMP;
+    float UNIT;
+    int ROW;
+
 
     const vector<string> candlePixel = {
-        "     ",
-        "  |  ",
-        "|GGG|",  // for green candle
-        "|RRR|"}; // for red candle
+        "          ",
+        "     |    ",
+        "  |GGGGG| ",  // for green candle
+        "  |RRRRR| "   // for red candle
+    }; 
 
-    const string space = "    ";
+    const string space = "      ";
 
-    string formatYscale(int val)
+    string formatYscale(float val)
     {
         ostringstream out;
         out << ((val < 0) ? "-" : " ");
-        out << setw(6) << setfill(' ') << abs(val) << "F    ";
+        out << setw(5) << setfill(' ') << fixed << setprecision(2) << abs(val) << "F    ";
         return out.str();
     }
     float convertToRow(float t)
@@ -47,10 +44,14 @@ private:
     }
 
 public:
-    Graphics(vector<Candlestick> &candleData) : candleData(candleData) {}
+    CandleGraph(float mx, float mn, float unit){
+        MAXTEMP = mx;
+        MINTEMP = mn;
+        UNIT = unit;
+        ROW = (MAXTEMP - MINTEMP) / UNIT;
+    }
 
-    void display()
-    {
+    void display(vector<Candlestick> &candleData, int nextIdx, vector<string>&TIMESTAMPS, int xScaleIdx){
 
         vector<Candlestick> rowData(candleData.size());
         for (int i = 0; i < candleData.size(); i++)
@@ -70,7 +71,7 @@ public:
         for (int i = 0; i < ROW; i++)
         {
 
-            int p = MAXTEMP - UNIT * i;
+            float p = MAXTEMP - UNIT * i;
             fout << formatYscale(p);
             for (int j = 0; j < COL; j++)
             {
@@ -96,11 +97,20 @@ public:
 
         // BOTTOM LINE (X AXIS)
         fout << formatYscale(MINTEMP);
-        for (int i = 0; i < COL; i++)
-        {
-            fout << "MAR" << setfill('0') << setw(2) << i << space;
+
+        for(int i=0; i<candleData.size(); i++){
+            fout<< TIMESTAMPS[nextIdx].substr(0,10)<<space;
+
+            nextIdx = getNextDateIdx(TIMESTAMPS[nextIdx], xScaleIdx);
+
         }
         fout << endl;
-        ///////////////////////////////
+
+
+
+        system("start notepad graph.txt");
+
+
+
     }
 };
