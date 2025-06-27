@@ -65,7 +65,7 @@ string toUpperCase(const string& input) {
 tuple<int, int, int> getDateInput(const string& label, int xScaleIdx) {
     int y = 1980, m = 1, d = 1;
 
-    cout << "Enter " << label << " Year: ";
+    cout << "Enter " << label << " Year (1980 to 2019): ";
     cin >> y;
     if (y == 0) return make_tuple(0, 0, 0);
 
@@ -105,9 +105,10 @@ int dateToIdx(int y, int m, int d, int xScaleIdx) {
     if( xScaleIdx < 1 ) m = 1;
 
     // Validate date range
-    if (y < 1980 || y > 2020) return -1;
+    if (y < 1980 || y > 2019) return -1;
     if (m < 1 || m > 12) return -1;
     if (d < 1 || d > 31) return -1;
+    if(y==2019 and m>2) return -1;
 
     // Create date object
     chrono::year_month_day ymd = chrono::year{y} / chrono::month{(unsigned int) m} / chrono::day{(unsigned int) d};
