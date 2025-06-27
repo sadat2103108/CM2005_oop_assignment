@@ -1,5 +1,5 @@
 #include <bits/stdc++.h>
-#include "CandleGraph.h"
+#include "Graphics.h"
 #include "processCSV.h"
 #include "utils.h"
 #include "generateData.h"
@@ -17,6 +17,7 @@ const vector<string> xScales = {"Year", "Month", "Day"};
 int xScaleIdx;
 
 int startDateIdx, endDateIdx;
+int predictY, predictM, predictD;
 
 void init()
 {
@@ -112,7 +113,7 @@ void selectDateRange() {
     endDateIdx = idx2;
 }
 
-void displayCandleSticks()
+void plotCandleStickData()
 {
 	startDateIdx = getNextDateIdx(TIMESTAMPS[startDateIdx], xScaleIdx, false);
 	endDateIdx = getNextDateIdx(TIMESTAMPS[endDateIdx], xScaleIdx, false);
@@ -129,9 +130,50 @@ void displayCandleSticks()
 	mx += (5 * unit);
 	mn -= (5 * unit);
 
-	CandleGraph cg(mx, mn, unit);
+	Graphics g(mx, mn, unit);
+	g.displayCandleSticks(data, startDateIdx, TIMESTAMPS, xScaleIdx);
+}
 
-	cg.display(data, startDateIdx, TIMESTAMPS, xScaleIdx);
+
+void selectPredictionDate(){
+	clearScreen();
+	
+    while(true){
+		int y,m,d;
+		cout<<"Set prediction date :======" ;
+		cout<<"Enter year: "; cin>>y;
+		cout<<"Enter month: "; cin>>m;
+		cout<<"Enter day: "; cin>>d;
+		
+		chrono::year_month_day ymd = chrono::year{y} / chrono::month{(unsigned int) m} / chrono::day{(unsigned int) d};
+		
+		if(ymd.ok()){
+			predictY=y;
+			predictM=m;
+			predictD=d;
+			break;
+		}
+		clearScreen();
+	} 
+
+}
+
+void plotPredictedData(){
+
+	vector<float> prediction = predictTemperature(TEMPERATURES[countryIdx],predictY, predictM, predictD);
+	float mx = prediction[0], mn = prediction[0];
+
+	for(float temp: prediction){
+		mx = max(mx,temp);
+		mn = min(mn,temp);
+	}
+	float unit = (mx - mn + 1) / 20;
+	mx += (3 * unit);
+	mn -= (3 * unit);
+
+	Graphics g(mx,mn,unit);
+	g.displayPredictions(prediction);
+
 }
 
 int main()
@@ -167,12 +209,15 @@ int main()
 			selectTimeFrame();
 			selectDateRange();
 
-			displayCandleSticks();
+			plotCandleStickData();
 		}
 
 		if (op == 2)
 		{
-			cout << "brrrr" << endl;
+			selectCountry();
+			selectPredictionDate();
+
+			plotPredictedData();
 		}
 	}
 

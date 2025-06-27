@@ -8,7 +8,7 @@
 
 using namespace std;
 
-class CandleGraph
+class Graphics
 {
 private:
 
@@ -18,11 +18,13 @@ private:
     int ROW;
 
 
-    const vector<string> candlePixel = {
+    const vector<string> pixels = {
         "          ",
         "     |    ",
         "  |GGGGG| ",  // for green candle
-        "  |RRRRR| "   // for red candle
+        "  |RRRRR| ",   // for red candle
+        "  ##  ",   // for prediction temp
+        "      ",   // for prediction temp
     }; 
 
     const string space = "      ";
@@ -41,14 +43,16 @@ private:
     }
 
 public:
-    CandleGraph(float mx, float mn, float unit){
+    Graphics(float mx, float mn, float unit){
         MAXTEMP = mx;
         MINTEMP = mn;
         UNIT = unit;
         ROW = (MAXTEMP - MINTEMP) / UNIT;
     }
 
-    void display(vector<Candlestick> &candleData, int nextIdx, vector<string>&TIMESTAMPS, int xScaleIdx){
+    void displayCandleSticks(vector<Candlestick> &candleData, int nextIdx, vector<string>&TIMESTAMPS, int xScaleIdx){
+
+        const string FILEPATH = "graphCandle.txt";
 
         vector<Candlestick> rowData(candleData.size());
         for (int i = 0; i < candleData.size(); i++)
@@ -61,7 +65,7 @@ public:
             rowData[i].close = convertToRow(rowData[i].close);
         }
 
-        ofstream fout("graph.txt");
+        ofstream fout(FILEPATH);
 
         const int COL = rowData.size();
 
@@ -78,16 +82,16 @@ public:
                 int bottomBody = max(candle.open, candle.close);
 
                 if ((i >= candle.high and i < topBody) or (i > bottomBody and i <= candle.low))
-                    fout << candlePixel[1] << space;
+                    fout << pixels[1] << space;
                 else if (i >= topBody and i <= bottomBody)
                 {
                     if (candle.close < candle.open)
-                        fout << candlePixel[2] << space;
+                        fout << pixels[2] << space;
                     else
-                        fout << candlePixel[3] << space;
+                        fout << pixels[3] << space;
                 }
                 else
-                    fout << candlePixel[0] << space;
+                    fout << pixels[0] << space;
             }
             fout << endl;
         }
@@ -105,9 +109,61 @@ public:
 
 
 
-        system("start notepad graph.txt");
-
-
+        const string command =  "start notepad \"" + FILEPATH + "\"";
+        system(command.c_str());
 
     }
+
+
+    void displayPredictions(vector<float>&predictData){
+        const string FILEPATH = "graphPredicton.txt";
+
+        vector<float> rowData(predictData.size());
+        for (int i = 0; i < predictData.size(); i++)
+        {
+            rowData[i] = convertToRow(predictData[i]);
+        }
+
+        //////////////////////////
+
+        ofstream fout(FILEPATH);
+
+        const int COL = rowData.size();
+
+        for (int i = 0; i < ROW; i++)
+        {
+
+            float p = MAXTEMP - UNIT * i;
+            fout << formatYscale(p);
+            for (int j = 0; j < COL; j++)
+            {
+                if(i== rowData[j] ) fout<<pixels[4]<<space ;
+                else fout << pixels[5] << space;
+            }
+            fout << endl;
+        }
+
+        // BOTTOM LINE (X AXIS)
+        fout << formatYscale(MINTEMP);
+
+        for(int i=0; i<predictData.size(); i++){
+            fout<<setw(2) << setfill('0') <<i;
+            fout<<":00H" <<space;
+
+        }
+        fout << endl;
+
+        //////////////////////////
+
+
+
+
+        
+
+        const string command =  "start notepad \"" + FILEPATH + "\"";
+        system(command.c_str());
+    }
+
+
+
 };

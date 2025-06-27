@@ -108,7 +108,6 @@ int dateToIdx(int y, int m, int d, int xScaleIdx) {
     if (y < 1980 || y > 2019) return -1;
     if (m < 1 || m > 12) return -1;
     if (d < 1 || d > 31) return -1;
-    if(y==2019 and m>2) return -1;
 
     // Create date object
     chrono::year_month_day ymd = chrono::year{y} / chrono::month{(unsigned int) m} / chrono::day{(unsigned int) d};
