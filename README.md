@@ -1,4 +1,4 @@
-# European Weather Candlestick Visualizer
+# CM2005_OOP_ASSIGNMENT
 
 This C++ program processes hourly temperature data from multiple European countries and generates a candlestick chart representation for a user-specified date range.
 

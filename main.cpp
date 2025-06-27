@@ -140,7 +140,7 @@ void selectPredictionDate(){
 	
     while(true){
 		int y,m,d;
-		cout<<"Set prediction date :======" ;
+		cout<<"Set prediction date :======"<<endl ;
 		cout<<"Enter year: "; cin>>y;
 		cout<<"Enter month: "; cin>>m;
 		cout<<"Enter day: "; cin>>d;
