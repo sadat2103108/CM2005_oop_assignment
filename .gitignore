@@ -1,5 +1,6 @@
 weather_data.csv
-graph.txt
+graphCandle.txt
+graphPredicton.txt
 # Compiled object files
 *.o
 *.obj
