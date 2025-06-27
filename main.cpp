@@ -25,7 +25,6 @@ void init()
 
 	loadFromCSV(COUNTRIES, TIMESTAMPS, TEMPERATURES);
 
-	// setUpCountryData();
 	countryCode = (*COUNTRIES.begin()).first;
 	countryIdx = COUNTRIES[countryCode];
 	startDateIdx = 0;
@@ -54,7 +53,7 @@ void selectCountry()
 
 	countryCode = x;
 	countryIdx = COUNTRIES[x];
-	// setUpCountryData();
+
 }
 
 void selectTimeFrame()
@@ -180,7 +179,7 @@ int main()
 	cout << "LOADING DATA FROM CSV..." << endl;
 	init();
 	
-	
+
 
 
 	while (true)

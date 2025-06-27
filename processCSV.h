@@ -1,86 +1,84 @@
 #pragma once
-#include <vector>
-#include <map>
-#include <string>
-#include <fstream>
-#include <sstream>
-#include <iomanip>
-#include <ctime>
-
+#include <bits/stdc++.h>
 
 using namespace std;
 
-vector<vector<float>> transpose(const vector<vector<float>>& mat) {
-    if (mat.empty()) return {};
+// Transpose a 2D matrix
+vector<vector<float>> transpose(const vector<vector<float>>& matrix) {
+    if (matrix.empty()) return {};
 
-    int rows = mat.size();
-    // Find max number of columns in any row
-    int cols = 0;
-    for (const auto& row : mat)
-        if ((int)row.size() > cols) cols = row.size();
+    int rows = matrix.size();
+    int maxCols = 0;
+    for (const auto& row : matrix)
+        maxCols = max(maxCols, (int)row.size());
 
-    vector<vector<float>> transposed(cols, vector<float>(rows, 0.0f));
+    vector<vector<float>> result(maxCols, vector<float>(rows, 0.0f));
 
     for (int i = 0; i < rows; ++i) {
-        for (int j = 0; j < (int)mat[i].size(); ++j) {
-            transposed[j][i] = mat[i][j];
+        for (int j = 0; j < (int)matrix[i].size(); ++j) {
+            result[j][i] = matrix[i][j];
         }
     }
 
-    return transposed;
+    return result;
 }
 
-// tm parseTimestamp(const string& timestamp) {
-//     tm t = {};
-//     istringstream ss(timestamp.substr(0, 19));
-//     ss >> get_time(&t, "%Y-%m-%dT%H:%M:%S");
-
-//     return t;
-// }
-
+// Load temperature data from CSV and populate country map, timestamps, and temperatures
 void loadFromCSV(
-    map<string, int> &countries, 
-    // vector<tm> &timestamps, 
-    vector<string> &timestamps, 
-    vector<vector<float>> &temperatures
-){
+    map<string, int>& countryIndexMap, 
+    vector<string>& timestamps, 
+    vector<vector<float>>& temperatureData
+) {
+    ifstream file("weather_data.csv");
+    if (!file.is_open()) {
+        cerr << "Error: Could not open file weather_data.csv\n";
+        return;
+    }
 
-    ifstream fin("weather_data.csv");
     string line;
-    fin >> line;
-    stringstream ss(line);
-    string token;
-    int j = 0;
+    getline(file, line); // Read header line
+    stringstream headerStream(line);
+    string headerToken;
+    int colIndex = 0;
 
-    while (getline(ss, token, ','))
-    {
-        if ((j - 1) % 3 == 0)
-        {
-            countries[token.substr(0, 2)]= countries.size();
-        }
-        j++;
-    }
-
-    while (fin >> line)
-    {
-        vector<float> temperature;
-        stringstream s1(line);
-        string token1;
-        j = 0;
-        while (getline(s1, token1, ','))
-        {
-            if (j == 0)
-                // timestamps.push_back(parseTimestamp(token1));
-                timestamps.push_back(token1);
-            if ((j - 1) % 3 == 0)
-            {
-                temperature.push_back(stof(token1));
+    // Parse header to build country index map
+    while (getline(headerStream, headerToken, ',')) {
+        if ((colIndex - 1) % 3 == 0 && colIndex >= 1) {
+            string countryCode = headerToken.substr(0, 2);
+            if (!countryCode.empty() && countryIndexMap.find(countryCode) == countryIndexMap.end()) {
+                countryIndexMap[countryCode] = countryIndexMap.size();
             }
-            j++;
         }
-        temperatures.push_back(temperature);
+        ++colIndex;
     }
 
-    temperatures = transpose(temperatures);
-}
+    // Parse each row of data
+    while (getline(file, line)) {
+        stringstream lineStream(line);
+        string token;
+        int tokenIndex = 0;
+        vector<float> rowTemperatures;
+        string timestamp;
 
+        while (getline(lineStream, token, ',')) {
+            if (tokenIndex == 0) {
+                timestamp = token;
+            } else if ((tokenIndex - 1) % 3 == 0) {
+                try {
+                    rowTemperatures.push_back(stof(token));
+                } catch (const exception& e) {
+                    rowTemperatures.push_back(NAN); // Handle invalid float
+                }
+            }
+            ++tokenIndex;
+        }
+
+        timestamps.push_back(timestamp);
+        temperatureData.push_back(rowTemperatures);
+    }
+
+    file.close();
+
+    // Transpose so each row corresponds to a country
+    temperatureData = transpose(temperatureData);
+}
