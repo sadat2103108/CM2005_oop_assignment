@@ -5,9 +5,10 @@
 #include <iomanip>
 #include <fstream>
 #include "Candlestick.h"
+#include <cmath>
 using namespace std;
 
-class Monitor
+class Graphics
 {
 private:
     /*
@@ -16,9 +17,11 @@ private:
         so the scale is made in range [-40,120]
         in Y axis , 1 Unit = 5F
     */
-    const int MAXTEMP = 120;
-    const int MINTEMP = -40;
-    const int UNIT = 5;
+    const float MAXTEMP = 45;
+    const float MINTEMP = -40;
+    // const int MAXTEMP = 100;
+    // const int MINTEMP = 40;
+    const float UNIT = 1;
     const int ROW = (MAXTEMP - MINTEMP) / UNIT;
     vector<Candlestick> &candleData;
 
@@ -34,7 +37,7 @@ private:
     {
         ostringstream out;
         out << ((val < 0) ? "-" : " ");
-        out << setw(3) << setfill(' ') << abs(val) << "F    ";
+        out << setw(6) << setfill(' ') << abs(val) << "F    ";
         return out.str();
     }
     float convertToRow(float t)
@@ -44,7 +47,7 @@ private:
     }
 
 public:
-    Monitor(vector<Candlestick> &candleData) : candleData(candleData) {}
+    Graphics(vector<Candlestick> &candleData) : candleData(candleData) {}
 
     void display()
     {
@@ -67,7 +70,7 @@ public:
         for (int i = 0; i < ROW; i++)
         {
 
-            int p = 120 - UNIT * i;
+            int p = MAXTEMP - UNIT * i;
             fout << formatYscale(p);
             for (int j = 0; j < COL; j++)
             {

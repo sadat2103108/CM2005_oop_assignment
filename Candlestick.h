@@ -1,3 +1,4 @@
+#pragma once
 
 class Candlestick{
 public:
@@ -5,4 +6,5 @@ public:
   float high;
   float low;
   float close;
+  
 };

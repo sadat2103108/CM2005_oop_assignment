@@ -1,10 +1,16 @@
 
-s = 0
+
+n = 29
 v = []
-while True:
-    x = int(input())
-    if x==0 : break
-    s+=x
-    v.append(s)
-    
-print(v)
+for _ in range(n):
+    s = input().split()
+    x = float(s[1])
+    v.append(x)
+
+
+# for x in v:
+#     print(x)
+
+
+print(sum(v)/len(v))
+
