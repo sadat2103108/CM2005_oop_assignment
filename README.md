@@ -37,4 +37,5 @@ g++ -std=c++20 main.cpp -o weather_app
 ### On Windows (Command Prompt or VS Code terminal):
 ```
 g++ -std=c++20 main.cpp -o weather_app && weather_app
+weather_app
 ```
